@@ -1,44 +1,24 @@
 const functions = require('firebase-functions');
 
-const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const base = alphabet.length; // base is the length of the alphabet (62 in this case)
+const admin = require('firebase-admin');
+admin.initializeApp(functions.config().firebase);
 
-var urls = []
+var db = admin.database();
+var ref = db.ref("/");
 
-var id = -1;
 
 exports.encode = functions.https.onRequest((request, response) => {
     let urlToShort = request.query.url;
 
-    id +=1;
-
-    urls[id] = {
-        url: urlToShort,
-        encoded: encode(id)
-    } 
+    var insterted = ref.push(urlToShort);
     
-    response.send(urls[id]);
+    response.send(insterted.key.substring(insterted.key.length-5));
 });
 
-// utility function to convert base 10 integer to base 58 string
-function encode(num){
-    var encoded = '';
-    while (encoded.length < 4){
-      var remainder = num % base;
-      num = Math.floor(num / base);
-      encoded = alphabet[remainder].toString() + encoded;
-    }
-    return encoded;
-  }
+exports.decode = functions.https.onRequest((request, response) => {
+    let encoded = request.query.encoded;
 
-  // utility function to convert a base 58 string to base 10 integer
-function decode(str){
-    var decoded = 0;
-    while (str){
-      var index = alphabet.indexOf(str[0]);
-      var power = str.length - 1;
-      decoded += index * (Math.pow(base, power));
-      str = str.substring(1);
-    }
-    return decoded;
-  }
+    ref.orderByKey().on("value", function(querySnapshot){
+        response.send(querySnapshot);
+    });
+});
