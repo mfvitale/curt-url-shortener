@@ -10,15 +10,22 @@ var ref = db.ref("/");
 exports.encode = functions.https.onRequest((request, response) => {
     let urlToShort = request.query.url;
 
-    var insterted = ref.push(urlToShort);
+    var newUrl = ref.push();
     
-    response.send(insterted.key.substring(insterted.key.length-5));
+    var shortenUrl = newUrl.key.substring(newUrl.key.length-5);
+
+    newUrl.set({
+      url: urlToShort,
+      encoded: shortenUrl
+    });
+    
+    response.send(shortenUrl);
 });
 
 exports.decode = functions.https.onRequest((request, response) => {
     let encoded = request.query.encoded;
-
-    ref.orderByKey().on("value", function(querySnapshot){
+    
+    ref.orderByChild("encoded").equalTo(encoded).on("child_added", function(querySnapshot){
         response.send(querySnapshot);
     });
 });

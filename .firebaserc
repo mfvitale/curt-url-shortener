@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "curt-url-shortener"
+    "default": "curt-url-shortener",
+    "staging": "curt-url-shortener"
   }
 }
