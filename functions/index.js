@@ -26,6 +26,7 @@ exports.decode = functions.https.onRequest((request, response) => {
     let encoded = request.query.encoded;
     
     ref.orderByChild("encoded").equalTo(encoded).on("child_added", function(querySnapshot){
-        response.send(querySnapshot);
+    
+        response.redirect(301, querySnapshot.toJSON().url);
     });
 });
