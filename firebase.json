@@ -9,7 +9,7 @@
     "rewrites": [
       {
         "source": "/**",
-        "function": "decode/**"
+        "function": "curt/decode"
       }
     ]
   }
