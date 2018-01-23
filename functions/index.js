@@ -18,7 +18,8 @@ app.get('/encode', (req, res) => {
 
     newUrl.set({
         url: urlToShort,
-        encoded: shortenUrl
+        encoded: shortenUrl,
+        visit: 0
     });
     
     res.send(shortenUrl);
@@ -27,10 +28,28 @@ app.get('/encode', (req, res) => {
 
 app.get('/decode/:shorten', (req, res) => {  
     let encoded = req.params.shorten;
+   
+    ref.orderByChild("encoded").equalTo(encoded).once("value").then(function(querySnapshot){
+        if(querySnapshot.exists()){
+            querySnapshot.forEach(function(result) {
 
-    ref.orderByChild("encoded").equalTo(encoded).on("child_added", function(querySnapshot){
-        
-        res.redirect(301, querySnapshot.toJSON().url);
+                console.log(result.key);
+                ref.child(result.key).once("value").then(function (snapshot) {
+                    console.log(snapshot.val());
+
+                    var element = snapshot.val();
+                    
+                    ref.child(result.key).update({"visit": ++element.visit});
+                    
+                    //TODO move redirect to front-end
+                    res.redirect(301, element.url);
+                });
+            });
+        } else {
+            console.log("Not exist");
+
+            res.send(404, "Url not found!")
+        }
     });
 });
 
