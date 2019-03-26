@@ -7,9 +7,9 @@ I used [Cloud Function for Firebase](https://firebase.google.com/docs/functions/
 
 Go to https://us-central1-curt-url-shortener.cloudfunctions.net/curt/encode?url=http://www.google.com
 
-And the service will return a 5 lenght string, let call it **breviatedURL**.
+And the service will return a 5 lenght string, let call it **shortCode**.
 
-Go to https://us-central1-curt-url-shortener.cloudfunctions.net/curt/decode/abbreviatedURL and you'll be redirected to the shorted site.
+Go to https://us-central1-curt-url-shortener.cloudfunctions.net/curt/decode/shortCode and you'll be redirected to the shorted site.
 
 # Why 'curt'
 
